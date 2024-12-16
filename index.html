@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G4 Pay Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #f5f6f8, #e9ebee);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  header {
+    background: #1C3C5A;
+    color: #fff;
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  .container {
+    margin-top: 2rem;
+    width: 90%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    padding: 2rem;
+    position: relative;
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.3s;
+  }
+
+  select:focus {
+    border-color: #1C3C5A;
+    outline: none;
+  }
+
+  .modifier-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modifier-group label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .modifier-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+    accent-color: #1C3C5A;
+    cursor: pointer;
+  }
+
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+
+  .controls button {
+    background: #1C3C5A;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    flex: 1;
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .controls button:hover {
+    background: #162f47;
+    transform: translateY(-1px);
+  }
+
+  .stop-btn {
+    background: #C14141;
+  }
+
+  .stop-btn:hover {
+    background: #a53434;
+  }
+
+  .reset-btn {
+    background: #1C5A3C;
+  }
+
+  .reset-btn:hover {
+    background: #15442d;
+  }
+
+  .output-container {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .output-container .label {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .output-container .amount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #222;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .last-run {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+    font-weight: 500;
+  }
+
+  details {
+    margin-top: 1.5rem;
+  }
+
+  details summary {
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  details[open] summary {
+    margin-bottom: 1rem;
+  }
+
+  .advanced-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .advanced-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #444;
+  }
+
+  .advanced-group input[type="time"] {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: #fff;
+    transition: border-color 0.3s;
+  }
+
+  .advanced-group input[type="time"]:focus {
+    border-color: #1C3C5A;
+    outline: none;
+  }
+
+  .advanced-group button {
+    background: #1C3C5A;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-weight: 500;
+    align-self: flex-start;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .advanced-group button:hover {
+    background: #162f47;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 480px) {
+    header {
+      font-size: 1.4rem;
+    }
+
+    .controls button {
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .output-container .amount {
+      font-size: 2.5rem;
+    }
+
+    details summary {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Milestone Animations */
+  .hundred-milestone {
+    animation: highlight100 1s ease;
+  }
+  @keyframes highlight100 {
+    0% { color: #222; transform: scale(1); }
+    20% { color: #1C5A3C; transform: scale(1.1); }
+    50% { color: #1C5A3C; transform: scale(1.1); }
+    100% { color: #222; transform: scale(1); }
+  }
+
+  .thousand-milestone {
+    animation: highlight1000 1.5s ease;
+  }
+  @keyframes highlight1000 {
+    0% { text-shadow: none; transform: scale(1); }
+    20% { text-shadow: 0 0 15px rgba(0,150,0,0.7); transform: scale(1.2); }
+    80% { text-shadow: 0 0 15px rgba(0,150,0,0.7); transform: scale(1.2); }
+    100% { text-shadow: none; transform: scale(1); }
+  }
+
+</style>
+</head>
+<body>
+
+<header>G4 Pay Timer</header>
+
+<div class="container">
+  <div class="input-group">
+    <label for="position">Position:</label>
+    <select id="position">
+      <option value="">Select Position</option>
+      <option value="captain">Captain</option>
+      <option value="fo">First Officer</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="year">Year:</label>
+    <select id="year">
+      <option value="">Select Year</option>
+      <!-- Options populated by JS -->
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label>Modifiers:</label>
+    <div class="modifier-group">
+      <label><input type="checkbox" id="vfn">VFN (2x)</label>
+      <label><input type="checkbox" id="premium">Premium (1.3x)</label>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" class="stop-btn" disabled>Stop</button>
+    <button id="resetBtn" class="reset-btn" disabled>Reset</button>
+  </div>
+
+  <div class="output-container">
+    <div class="label">Earned:</div>
+    <div class="amount" id="earnedAmount">$0.00</div>
+    <div class="last-run" id="lastRunDisplay" style="display:none;">Last: $0.00</div>
+  </div>
+
+  <details>
+    <summary>Advanced</summary>
+    <div class="advanced-group">
+      <div>
+        <label for="manualStartTime">Manual Start Time (Today):</label>
+        <input type="time" id="manualStartTime">
+      </div>
+      <div>
+        <label for="manualStopTime">Manual Stop Time (Today):</label>
+        <input type="time" id="manualStopTime">
+      </div>
+      <button id="applyAdvancedBtn">Apply Adjustments</button>
+    </div>
+  </details>
+</div>
+
+<script>
+// Pay scales for Captain and First Officer according to the given data
+const captainPayScale = {
+  1: 163,
+  2: 170,
+  3: 176,
+  4: 184,
+  5: 191,
+  6: 197,
+  7: 202,
+  8: 209,
+  9: 214,
+  10: 219,
+  11: 223,
+  12: 230
+};
+
+const foPayScale = {
+  1: 57,
+  2: 102,
+  3: 110,
+  4: 116,
+  5: 122,
+  6: 128,
+  7: 134,
+  8: 138,
+  9: 143,
+  10: 147,
+  11: 150,
+  12: 154
+};
+
+const positionSelect = document.getElementById('position');
+const yearSelect = document.getElementById('year');
+const vfnCheckbox = document.getElementById('vfn');
+const premiumCheckbox = document.getElementById('premium');
+
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const resetBtn = document.getElementById('resetBtn');
+const earnedAmount = document.getElementById('earnedAmount');
+const lastRunDisplay = document.getElementById('lastRunDisplay');
+
+const manualStartTimeInput = document.getElementById('manualStartTime');
+const manualStopTimeInput = document.getElementById('manualStopTime');
+const applyAdvancedBtn = document.getElementById('applyAdvancedBtn');
+
+let interval = null;
+let startTime = 0;
+let elapsedSeconds = 0;
+let hourlyWage = 0;
+let lastEarnings = 0;
+let lastHundredThreshold = 0;
+let lastThousandThreshold = 0;
+let timerRunning = false;
+
+function populateYearDropdown(pos) {
+  yearSelect.innerHTML = '<option value="">Select Year</option>';
+  let scale = pos === 'captain' ? captainPayScale : foPayScale;
+  for (let yr = 1; yr <= 12; yr++) {
+    const pay = scale[yr];
+    const option = document.createElement('option');
+    option.value = yr.toString();
+    option.textContent = `Year ${yr} ($${pay})`;
+    yearSelect.appendChild(option);
+  }
+}
+
+function getHourlyWage() {
+  const pos = positionSelect.value;
+  const yr = yearSelect.value;
+  if (!pos || !yr) return 0;
+
+  let basePay = 0;
+  if (pos === 'captain') {
+    basePay = captainPayScale[yr] || 0;
+  } else if (pos === 'fo') {
+    basePay = foPayScale[yr] || 0;
+  }
+
+  // Apply multiplier logic:
+  let multiplier = 1.0;
+  if (vfnCheckbox.checked) {
+    multiplier = 2.0;
+  } else if (premiumCheckbox.checked) {
+    multiplier = 1.3;
+  }
+
+  return basePay * multiplier;
+}
+
+function updateEarnings() {
+  hourlyWage = getHourlyWage();
+  const earnings = (hourlyWage / 3600) * elapsedSeconds;
+  earnedAmount.textContent = '$' + earnings.toFixed(2);
+
+  // Check for milestones
+  const hundredMark = Math.floor(earnings / 100);
+  const thousandMark = Math.floor(earnings / 1000);
+
+  if (hundredMark > lastHundredThreshold) {
+    lastHundredThreshold = hundredMark;
+    earnedAmount.classList.add('hundred-milestone');
+    setTimeout(() => {
+      earnedAmount.classList.remove('hundred-milestone');
+    }, 1000);
+  }
+
+  if (thousandMark > lastThousandThreshold) {
+    lastThousandThreshold = thousandMark;
+    earnedAmount.classList.add('thousand-milestone');
+    setTimeout(() => {
+      earnedAmount.classList.remove('thousand-milestone');
+    }, 1500);
+  }
+}
+
+positionSelect.addEventListener('change', () => {
+  const pos = positionSelect.value;
+  if (pos) {
+    populateYearDropdown(pos);
+  } else {
+    yearSelect.innerHTML = '<option value="">Select Year</option>';
+  }
+});
+
+// Ensure that checking one checkbox unchecks the other
+vfnCheckbox.addEventListener('change', () => {
+  if (vfnCheckbox.checked) {
+    premiumCheckbox.checked = false;
+  }
+  if (interval) updateEarnings();
+});
+
+premiumCheckbox.addEventListener('change', () => {
+  if (premiumCheckbox.checked) {
+    vfnCheckbox.checked = false;
+  }
+  if (interval) updateEarnings();
+});
+
+startBtn.addEventListener('click', () => {
+  if (!positionSelect.value) {
+    alert('Please select a position.');
+    return;
+  }
+  if (!yearSelect.value) {
+    alert('Please select the year.');
+    return;
+  }
+
+  hourlyWage = getHourlyWage();
+  if (hourlyWage <= 0) {
+    alert('Invalid pay scale selection. Please try again.');
+    return;
+  }
+
+  startTime = (Date.now() / 1000) - elapsedSeconds;
+  if (!interval) {
+    interval = setInterval(() => {
+      elapsedSeconds = Math.floor((Date.now() / 1000) - startTime);
+      updateEarnings();
+    }, 1000);
+    timerRunning = true;
+  }
+
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+  resetBtn.disabled = false;
+  positionSelect.disabled = true;
+  yearSelect.disabled = true;
+  vfnCheckbox.disabled = true;
+  premiumCheckbox.disabled = true;
+});
+
+stopBtn.addEventListener('click', () => {
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+    timerRunning = false;
+  }
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+});
+
+resetBtn.addEventListener('click', () => {
+  // Store last earnings before resetting
+  let currentEarnings = (hourlyWage / 3600) * elapsedSeconds;
+  lastEarnings = currentEarnings;
+  lastRunDisplay.textContent = 'Last: $' + lastEarnings.toFixed(2);
+  lastRunDisplay.style.display = 'block';
+
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  elapsedSeconds = 0;
+  updateEarnings();
+
+  timerRunning = false;
+
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  resetBtn.disabled = true;
+
+  // Do NOT reset position, year, and modifiers - keep them
+  positionSelect.disabled = false;
+  yearSelect.disabled = false;
+  vfnCheckbox.disabled = false;
+  premiumCheckbox.disabled = false;
+
+  // Reset milestone tracking
+  lastHundredThreshold = 0;
+  lastThousandThreshold = 0;
+});
+
+// Helper to combine today's date with a given time string (HH:MM)
+function combineTodayWithTime(timestr) {
+  if (!timestr) return null;
+  const today = new Date();
+  const [hh, mm] = timestr.split(':');
+  if (hh === undefined || mm === undefined) return null;
+  today.setHours(parseInt(hh,10), parseInt(mm,10), 0, 0);
+  return today;
+}
+
+// Apply adjustments from Advanced section
+applyAdvancedBtn.addEventListener('click', () => {
+  const manualStart = manualStartTimeInput.value;
+  const manualStop = manualStopTimeInput.value;
+
+  // Convert times to timestamps
+  let startTimestamp = null;
+  let stopTimestamp = null;
+
+  if (manualStart) {
+    let startDate = combineTodayWithTime(manualStart);
+    if (startDate && !isNaN(startDate.getTime())) {
+      startTimestamp = startDate.getTime() / 1000;
+    }
+  }
+
+  if (manualStop) {
+    let stopDate = combineTodayWithTime(manualStop);
+    if (stopDate && !isNaN(stopDate.getTime())) {
+      stopTimestamp = stopDate.getTime() / 1000;
+    }
+  }
+
+  // If a manual start time is provided:
+  if (startTimestamp !== null) {
+    if (timerRunning) {
+      // Adjust so that current elapsed aligns with new start
+      const nowSec = Date.now() / 1000;
+      elapsedSeconds = Math.max(0, Math.floor(nowSec - startTimestamp));
+      startTime = startTimestamp;
+    } else {
+      // If not running, we just set startTime
+      // If we have a stop time as well, recalc elapsed
+      startTime = startTimestamp;
+      if (stopTimestamp !== null && stopTimestamp >= startTime) {
+        elapsedSeconds = Math.max(0, Math.floor(stopTimestamp - startTime));
+      }
+    }
+  } else {
+    // If no manual start given, but manual stop given and not running
+    if (!timerRunning && stopTimestamp !== null && startTime !== 0) {
+      if (stopTimestamp > startTime) {
+        elapsedSeconds = Math.floor(stopTimestamp - startTime);
+      } else {
+        elapsedSeconds = 0;
+      }
+    }
+  }
+
+  // If no start timestamp given, but a stop timestamp is given and not running:
+  // Already handled above.
+
+  updateEarnings();
+});
+</script>
+</body>
+</html>
